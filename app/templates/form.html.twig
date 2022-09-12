@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Форма загрузки файла{% endblock %}
+
+{% block body %}
+    <h2 class="content__main-heading">Загрузить файл</h2>
+    {{ form_start(form) }}
+    {{ form_row(form.imageFile) }}
+    <button type="submit" class="btn btn-primary">Отправить</button>
+    {{ form_end(form) }}
+{% endblock %}

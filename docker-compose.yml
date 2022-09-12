@@ -1,0 +1,48 @@
+version: "3"
+services:
+    nginx:
+        image: nginx:latest
+        ports:
+            - "8083:80"
+        volumes:
+            - ./app:/app
+            - ./docker/nginx/:/etc/nginx/conf.d/
+        depends_on:
+            - php-fpm
+        working_dir: /app
+    php-fpm:
+        user: ${HOST_USER}
+        working_dir: /app
+        build:
+            context: ./docker/php-fpm
+            dockerfile: Dockerfile
+        volumes:
+            - ./app:/app
+            - ./docker/php-fpm/log/:/var/log/
+            - /etc/group:/etc/group:ro
+            - /etc/passwd:/etc/passwd:ro
+        ports:
+            - '9010:9000'
+        environment:
+            XDEBUG_CONFIG: "remote_enable=1"
+            PHP_IDE_CONFIG: "serverName=DockerSF5T"
+            COMPOSER_MEMORY_LIMIT: ${COMPOSER_MEMORY_LIMIT}
+            DATABASE_URL: "postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_CONTAINER_NAME}:5432/${DATABASE_NAME}"
+        #links:
+            #- postgres
+        depends_on:
+            - postgres
+
+    postgres:
+        container_name: ${DATABASE_CONTAINER_NAME}
+        restart: always
+        image: postgres:12.1
+        ports:
+            - "8432:5432"
+        environment:
+            POSTGRES_USER: ${DATABASE_USER}
+            POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+            POSTGRES_DB: ${DATABASE_NAME}
+        volumes:
+            - ./:/var/www/
+            #- ./docker/postgres:/var/lib/postgresql/data

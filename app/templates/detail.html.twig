@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Подчиненные сотрудника{% endblock %}
+
+{% block body %}
+    <h2 class="content__main-heading">Подчиненные сотрудника: <b>{{ id }}</b></h2>
+    {# total items count #}
+    <div class="count">
+        <p>Всего подчиненных: {{ pagination.getTotalItemCount }}</p>
+    </div>
+    <table>
+        <tr>
+            <th>Наименование сотрудника</th>
+            <th>Иеррахия</th>
+        </tr>
+        {# table body #}
+        {% for item in pagination %}
+            <tr>
+                <td>
+                    <a href="{{ path('detail', {id: item.id}) }}">
+                        {{ item.id }}
+                    </a>
+                </td>
+                <td>{{ item.ancestors }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    {# display navigation #}
+    <div class="navigation">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+{% endblock %}

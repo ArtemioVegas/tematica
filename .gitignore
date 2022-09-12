@@ -1,0 +1,5 @@
+.idea/
+.env
+docker/mysql/*
+docker/php-fpm/log/*
+.php_cs.cache

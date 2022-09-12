@@ -1,0 +1,47 @@
+# Deployed by {{ gitlab_ci_pipeline_url }}
+version: '3.3'
+
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/local/nginx/Dockerfile
+    restart: always
+    volumes:
+      - ./:/var/www/
+      - /var/log/tgdb/nginx:/var/log/nginx
+    ports:
+      - 8051:80
+    expose:
+      - 8888
+    depends_on:
+      - php-fpm
+
+  php-fpm:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/local/php/Dockerfile
+    restart: always
+    environment:
+      XDEBUG_CONFIG: client_host=10.254.254.254 idekey=tgdb-docker
+      XDEBUG_MODE: "debug"
+      PHP_TIMEZONE: "UTC"
+    volumes:
+      - ./:/var/www/
+    expose:
+      - '9000'
+    depends_on:
+      - postgres  
+
+  postgres:    
+    image: postgres:13.3-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5432:5432"
+    restart: always
+    volumes:
+      - ./:/var/www/
+      - ./tests/database:/docker-entrypoint-initdb.d

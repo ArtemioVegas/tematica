@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Список сотрудников{% endblock %}
+
+{% block body %}
+    <h2 class="content__main-heading">Список</h2>
+
+    {{ form_start(form, {'method': 'GET'}) }}
+    {{ form_row(form.employerId) }}
+        <button type="submit" class="btn btn-primary">Искать</button>
+        <a href="{{ path('list') }}">
+            Сбросить поиск
+        </a>
+    {{ form_end(form) }}
+
+    <table width="500px" cellpadding="5">
+        <caption>Список сотрудников</caption>
+        <tr>
+            <th>Наименования сотрудника</th>
+            <th>Руководитель сотрудника</th>
+        </tr>
+    {% for employer in pagination %}
+        <tr>
+            <td valign="top" width="50%" bgcolor="#f0f0f0">
+                <a href="{{ path('detail', {id: employer.id}) }}">
+                    {{ employer.id }}
+                </a></td>
+            <td valign="top" width="50%" bgcolor="#ffcc00">
+                <a href="{{ path('detail', {id: employer.parentId}) }}">
+                    {{ employer.parentId }}
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {# display navigation #}
+    <div class="navigation">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+{% endblock %}
